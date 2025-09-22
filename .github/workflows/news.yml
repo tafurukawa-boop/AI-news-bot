@@ -1,0 +1,27 @@
+name: AI News Bot
+
+on:
+  schedule:
+    - cron: "0 23 * * *"  # UTC 23:00 = 日本時間 8:00 毎日実行
+  workflow_dispatch:      # 手動実行ボタンも有効化
+
+jobs:
+  run-news-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: python ai_news.py
